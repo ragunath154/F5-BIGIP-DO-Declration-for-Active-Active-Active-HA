@@ -1,0 +1,156 @@
+{
+    "schemaVersion": "1.46.0",
+    "class": "Device",
+    "async": true,
+    "label": "Re-license BIG-IP while revoking the current license",
+    "Common": {
+        "class": "Tenant",
+        "hostname": "bigipc.f5demo.com",
+         "root": {
+            "class": "User",
+            "userType": "root",
+            "oldPassword": "Password@123",
+            "newPassword": "Password@123"
+        },
+        "myProvisioning": {
+            "class": "Provision",
+            "ltm": "nominal",
+            "avr": "minimum"
+        },
+         "external_vlan": {
+            "class": "VLAN",
+            "tag": 4094,
+            "mtu": 1500,
+            "interfaces": [
+                {
+                    "name": "1.1",
+                    "tagged": false
+                }
+            ]
+        },
+         "internal_vlan": {
+            "class": "VLAN",
+            "tag": 4093,
+            "mtu": 1500,
+            "interfaces": [
+                {
+                    "name": "1.2",
+                    "tagged": false
+                }
+            ]
+        },
+         "HA_vlan": {
+            "class": "VLAN",
+            "tag": 4092,
+            "mtu": 1500,
+            "interfaces": [
+                {
+                    "name": "1.3",
+                    "tagged": false
+                }
+            ]
+        },
+          "external-selfip": {
+            "class": "SelfIp",
+            "address": "192.168.187.103/24",
+            "vlan": "external_vlan",
+            "allowService": "default",
+            "trafficGroup": "traffic-group-local-only"
+         },
+            "internal-selfip": {
+            "class": "SelfIp",
+            "address": "192.168.189.103/24",
+            "vlan": "internal_vlan",
+            "allowService": "default",
+            "trafficGroup": "traffic-group-local-only"
+         },
+            "HA-selfip": {
+            "class": "SelfIp",
+            "address": "192.168.195.103/24",
+            "vlan": "HA_vlan",
+            "allowService": "default",
+            "trafficGroup": "traffic-group-local-only"
+         },
+          "myNtp": {
+            "class": "NTP",
+            "servers": [
+                "40.81.94.65"
+            ],
+            "timezone": "Asia/Calcutta"
+        },
+		 "myDns": {
+            "class": "DNS",
+            "nameServers": [
+                "172.16.0.90"
+            ],
+            "search": [
+                "f5demo.com"
+            ]
+        },
+		 "configsync": {
+            "class": "ConfigSync",
+            "configsyncIp": "192.168.195.103"
+        },
+        "failoverAddress": {
+            "class": "FailoverUnicast",
+            "address": "192.168.195.103"
+        },
+        "trust": {
+            "class": "DeviceTrust",
+            "localUsername": "admin",
+            "localPassword": "Password@123",
+            "remoteHost": "192.168.195.101",
+            "remoteUsername": "admin",
+            "remotePassword": "Password@123"
+        },
+        		"failoverGroup": {
+            "class": "DeviceGroup",
+            "type": "sync-failover",
+            "members": [
+                "bigipa.f5demo.com",
+                "bigipb.f5demo.com",
+                "bigipc.f5demo.com"
+            ],
+            "owner": "bigipa.f5demo.com",
+            "autoSync": true,
+            "saveOnAutoSync": false,
+            "networkFailover": true,
+            "fullLoadOnSync": false,
+            "asmSync": false
+        },
+        "traffic-group-1": {
+            "class": "TrafficGroup",
+            "autoFailbackEnabled": true,
+            "autoFailbackTime": 50,
+            "failoverMethod": "ha-order",
+            "haLoadFactor": 1,
+            "haOrder": [
+                "bigipa.f5demo.com",
+                "bigipb.f5demo.com",
+                "bigipb.f5demo.com"
+            ]
+        },
+        "traffic-group-2": {
+            "class": "TrafficGroup",
+            "autoFailbackEnabled": true,
+            "autoFailbackTime": 50,
+            "failoverMethod": "ha-order",
+            "haLoadFactor": 1,
+            "haOrder": [
+                "bigipb.f5demo.com",
+                "bigipc.f5demo.com"
+            ]
+        },
+        "traffic-group-3": {
+            "class": "TrafficGroup",
+            "autoFailbackEnabled": true,
+            "autoFailbackTime": 50,
+            "failoverMethod": "ha-order",
+            "haLoadFactor": 1,
+            "haOrder": [
+                "bigipc.f5demo.com",
+                "bigipa.f5demo.com"
+            ]
+        }
+    }
+}
